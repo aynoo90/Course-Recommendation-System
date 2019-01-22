@@ -3,9 +3,9 @@ import numpy as np
 import copy
 import seaborn as sns
 import matplotlib.pyplot as plt
-import category_encoders as ce
+import pylab as pl
 
-df_dataset = pd.read_excel("C:\\Users\\Kaser\\Desktop\\repo\\Course-Recommendation-System\\code\\data\\Dataset1.xlsx")
+df_dataset = pd.read_excel("C:\\Users\\Kmahmoud\\Desktop\\Course-Recommendation-System\\code\\data\\Dataset1.xlsx")
 
 df_dataset.head()
 cat_df_dataset = df_dataset.select_dtypes(include=['object']).copy()
@@ -56,4 +56,18 @@ skills = pd.get_dummies(df_dataset['Skills'].apply(pd.Series).stack(), prefix='S
 df_dataset = df_dataset.drop(['Skills'], axis=1)
 df_dataset = df_dataset.join(skills)
 
+
 print(df_dataset)
+
+sns.countplot(df_dataset['Course ID'],label="Count")
+plt.show()
+aggregation_functions = {'Grade': 'mean', 'Attepmpts': 'mean'}
+df_new = df_dataset.groupby(df_dataset['Course ID']).aggregate(aggregation_functions).reset_index()
+sns.barplot(df_new['Course ID'],df_new['Grade'])
+plt.show()
+sns.barplot(df_new['Course ID'],df_new['Attepmpts'])
+plt.show()
+
+writer = pd.ExcelWriter('encoded_data.xlsx', engine='xlsxwriter')
+df_dataset.to_excel(writer, sheet_name='Sheet1')
+writer.save()
