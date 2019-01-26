@@ -5,7 +5,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import pylab as pl
 
-df_dataset = pd.read_excel("C:\\Users\\Kmahmoud\\Desktop\\Course-Recommendation-System\\code\\data\\Dataset1.xlsx")
+df_dataset = pd.read_excel("data/Dataset(1).xlsx")
 
 df_dataset.head()
 cat_df_dataset = df_dataset.select_dtypes(include=['object']).copy()
@@ -67,6 +67,15 @@ sns.barplot(df_new['Course ID'],df_new['Grade'])
 plt.show()
 sns.barplot(df_new['Course ID'],df_new['Attepmpts'])
 plt.show()
+
+aggregation_functions = {'Grade': 'mean'}
+for col in df_dataset.columns:
+    if (col != "Course ID" and col != "Attepmpts" and col != "Grade" and col != "Student ID"):
+        aggregation_functions[col] = 'sum'
+
+df_dataset = df_dataset.groupby(df_dataset['Course ID']).aggregate(aggregation_functions).reset_index()
+print(df_dataset)
+
 
 writer = pd.ExcelWriter('encoded_data.xlsx', engine='xlsxwriter')
 df_dataset.to_excel(writer, sheet_name='Sheet1')
